@@ -1,68 +1,61 @@
-abstract class MovingPiece { //<>//
-  private float r, c;
-  private int velR, velC;
-  private int nextVelR, nextVelC;
+abstract class MovingPiece {
+  private PVector pos;
+  private PVector vel;
 
-  public MovingPiece(float r, float c, int velR, int velC) {
-    this.r = r;
-    this.c = c;
-    this.velR = velR;
-    this.velC = velC;
-    nextVelR = velR;
-    nextVelC = velC;
+  public MovingPiece(PVector pos, PVector vel) {
+    this.pos = pos;
+    this.vel = vel;
   }
 
-  public float getR() {
-    return r;
+  public PVector getPos() {
+    return pos;
   }
 
-  public float getC() {
-    return c;
+  public PVector getVel() {
+    return vel;
   }
 
-  public void queueTurn(int velR, int velC) {
-    nextVelR = velR;
-    nextVelC = velC;
+  public void setVel(PVector vel) {
+    this.vel=vel;
   }
 
-  public void tick() {
-    move();
-  }
-
-  private void move() {
-    //Changed direction only if centered on the grid
-    if ((int)r==r&&(int)c==c) {
-      float testR = Math.round((r+nextVelR/10.0)*10.0)/10.0;
-      float testC = Math.round((c+nextVelC/10.0)*10.0)/10.0;
-      int posR = Math.round(testR);
-      int posC = Math.round(testC);
-      if ((!isWall(posR+1, posC) || posR+1-testR >= 1) && (!isWall(posR-1, posC) || posR-1-testR <= -1) &&(!isWall(posR, posC+1) || posC+1-testC >= 1) &&(!isWall(posR, posC-1) || posC-1-testC <= -1)) {
-        velR= nextVelR;
-        velC=nextVelC;
-      }
-    }
-
+  public boolean isValidMove(PVector testVel) {
     //Check to see whether a move would put pacman into a wall
-    float testR = Math.round((r+velR/10.0)*10.0)/10.0;
-    float testC = Math.round((c+velC/10.0)*10.0)/10.0;
-    int posR = Math.round(testR);
-    int posC = Math.round(testC);
-    if ((!isWall(posR+1, posC) || posR+1-testR >= 1) && (!isWall(posR-1, posC) || posR-1-testR <= -1) &&(!isWall(posR, posC+1) || posC+1-testC >= 1) &&(!isWall(posR, posC-1) || posC-1-testC <= -1)) {
-      r=testR;
-      c=testC;
+    float testX = Math.round((pos.x+testVel.x*.1)*10.0)/10.0;
+    float testY = Math.round((pos.y+testVel.y*.1)*10.0)/10.0;
+    int posX = Math.round(testX);
+    int posY = Math.round(testY);
+    if ((!isWall(posY+1, posX) || posY+1-testY >= 1) && (!isWall(posY-1, posX) || posY-1-testY <= -1) && (!isWall(posY, posX+1) || posX+1-testX >= 1) &&(!isWall(posY, posX-1) || posX-1-testX <= -1)) {
+      return true;
     }
-    println("TestR: "+testR);
-    println("TestC: "+testC);
-    println("PosR: "+posR);
-    println("PosC: "+posC);
+    return false;
   }
-
-  private boolean isWall(int testR, int testC) {
-    if (!(testR<0||testC<0||testR>28||testC>25)) {
-      return board[testR][testC]==0;
+  boolean isWall(int testY, int testX) {
+    if (!(testY<0||testX<0||testY>28||testX>25)) {
+      return board[testY][testX]==0 || board[testY][testX]==4;
+    }
+    if ((testX == -1 || testX==26) && testY==13) {
+      return false;
     }
     return true;
   }
+  boolean isOnCenter(){
+    return (int)pos.y==pos.y && (int)pos.x==pos.x;
+  }
+  public void move() {
+    //Round off changes to avoid floating point errors
+    pos.x= (int)(Math.round((pos.x+vel.x*.1)*10.0))/10.0;
+    pos.y= (int)(Math.round((pos.y+vel.y*.1)*10.0))/10.0;
+
+    //Teleport case
+    if (pos.x <= -1 && vel.x<0) {
+      pos.x = 25.9;
+    } else if (pos.x>=26&&vel.x>0) {
+      pos.x = -.9;
+    }
+  }
+
+  
 
   public abstract void draw();
 }

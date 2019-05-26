@@ -1,11 +1,17 @@
 public int[][] board;
 public ArrayList<Ghost> ghosts;
-private PacMan pacman;
+public int powerUp;
+public PacMan pacman;
+public int boardNumber;
 private int gridSize = 30;
+public int score;
+
+
 
 void setup() {
   size(780, 870);
-  board = new int[][] {//Pac-Man board with 0's as walls, 1's as food, 2 as powerup food, and 3 as an empty space, 4 is a protected ghost space
+  board = new int[][] {
+    //Represents a Pac-Man board to check for wall collisions. 0 = wall, 1=food, 2=powerup, 3=open space, 4=ghost box
     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //0
     {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}, //1
     {2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2}, //2
@@ -36,70 +42,97 @@ void setup() {
     {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}, //27
     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //28
   };
+  //Create the Pac-Man and create ghosts
   pacman = new PacMan();
   ghosts = new ArrayList();
-  ghosts.add(new Ghost(12, 13, 0, 0));
+  ghosts.add(new Ghost(new PVector(12, 13), color(255, 0, 0), 4));
+  ghosts.add(new Ghost(new PVector(13, 13), color(200, 0, 100), 10));
+  ghosts.add(new Ghost(new PVector(12, 14), color(200, 150, 0), 10));
+  ghosts.add(new Ghost(new PVector(13, 14), color(100, 20, 20), 10));
+  boardNumber = 1;
+
+  score = 0;
+  //Set the time powered up to 0
+  powerUp = 0;
 }
 
 void draw() {
-  //Perform actions
+  //Run through a tick of all game objects to make them move
   tick();
 
   //Draw to screen
   background(255, 255, 255);
-
+  fill(255, 255, 255);
   //Draw walls and food
   for (int r = 0; r <board.length; r++) {
     for (int c = 0; c<board[0].length; c++) {
-      if (board[r][c] == 2) {
-        circle(gridSize*c+gridSize/2, gridSize*r+ gridSize/2, gridSize/2);
-      } else if (board[r][c] == 1) {
-        circle(gridSize*c+gridSize/2, gridSize*r+ gridSize/2, gridSize/3);
-      } else if (board[r][c]==0) {
+      fill(255, 255, 255);
+      //Draw walls
+      if (board[r][c] == 0) {        
+        fill(0, 0, 200);
         rect(gridSize*c, gridSize*r, gridSize, gridSize);
+        //Draw food
+      } else if (board[r][c] == 1) {
+        circle(gridSize*c+gridSize/2, gridSize*r+ gridSize/2, gridSize/5);
+        //Draw power-ups
+      } else if (board[r][c]==2) {
+        circle(gridSize*c+gridSize/2, gridSize*r+ gridSize/2, gridSize/2);
       }
     }
   }
-  //Draw pacman
+
+  //Draw pacman and ghosts
   pacman.draw();
   for (Ghost i : ghosts) {
     i.draw();
   }
 }
 
+//Send a new direction to Pac-Man whenever an arrow key is pressed to "store" a turn for whenever he can turn
 void keyPressed() {
   if (key == CODED) {
     if (keyCode == UP) {
-      pacman.queueTurn(-1, 0);
+      pacman.queueTurn(new PVector(0, -1));
     } else if (keyCode == DOWN) {
-      pacman.queueTurn(1, 0);
+      pacman.queueTurn(new PVector(0, 1));
     } else if (keyCode == LEFT) {
-      pacman.queueTurn(0, -1);
+      pacman.queueTurn(new PVector(-1, 0));
     } else if (keyCode == RIGHT) {
-      pacman.queueTurn(0, 1);
+      pacman.queueTurn(new PVector(1, 0));
     }
   }
 }
+
+//Call tick methods of Pac-Man and ghosts and check the status of the game
 void tick() {
+  pacman.tick();
   for (Ghost i : ghosts) {
     i.tick();
   }
-  pacman.tick();
   checkGame();
+  println(powerUp);
+  powerUp = powerUp > 0? powerUp-1: 0;
 }
 
+//Check if the game is won or lost
 void checkGame() {
+  boolean restart = true;
   for (int r = 0; r<board.length; r++) {
     for (int c = 0; c<board[0].length; c++) {
+      //Check to see if any food is left on the board
       if (board[r][c]==1||board[r][c]==2) {
-        return;
+        restart=false;
       }
     }
   }
-  for (Ghost i : ghosts) {
-    if (Math.abs(i.getR()-pacman.getR()) <.3 || Math.abs(i.getC()-pacman.getC()) <.3) {
-      //ADD DEATH
+  //Check for collisions with ghosts
+  for (int i = 0; i<ghosts.size(); i++) {
+    if (pacman.getPos().dist(ghosts.get(i).getPos())<.5) {
+      if (powerUp>0) {
+        ghosts.set(i, new Ghost(new PVector(12, 13), color(255, 0, 0), 5));
+      } else {
+        setup();
+      }
     }
   }
-  setup();
 }
