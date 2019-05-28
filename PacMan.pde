@@ -33,7 +33,9 @@ class PacMan extends MovingPiece {
   private void eat() {
     if (isOnCenter()) {
       if (board[Math.round(getPos().y)][Math.round(getPos().x)]==2) {
-        powerUp = 800/boardNumber;
+         for(int i = 0; i< ghosts.size(); i++){
+           ghosts.get(i).setPowerUp(1000/boardNumber);
+         }
         score+=20;
       }
       if (board[Math.round(getPos().y)][Math.round(getPos().x)]==1) {

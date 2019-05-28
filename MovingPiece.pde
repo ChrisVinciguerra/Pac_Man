@@ -18,7 +18,7 @@ abstract class MovingPiece {
   public void setVel(PVector vel) {
     this.vel=vel;
   }
-
+  
   public boolean isValidMove(PVector testVel) {
     //Check to see whether a move would put pacman into a wall
     float testX = Math.round((pos.x+testVel.x)*10.0)/10.0;

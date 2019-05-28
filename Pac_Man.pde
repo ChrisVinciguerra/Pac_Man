@@ -4,7 +4,6 @@ public int[][] board;
 public ArrayList<Ghost> ghosts;
 public PacMan pacman;
 
-public int powerUp;
 public int boardNumber;
 public int score;
 
@@ -48,12 +47,11 @@ void setup() {
   pacman = new PacMan();
   ghosts = new ArrayList();
   ghosts.add(new Ghost(new PVector(12, 13), color(255, 0, 0), 4));
-  /*ghosts.add(new Ghost(new PVector(13, 13), color(200, 0, 100), 8));
+  ghosts.add(new Ghost(new PVector(13, 13), color(200, 0, 100), 8));
   ghosts.add(new Ghost(new PVector(12, 14), color(200, 150, 0), 12));
-  ghosts.add(new Ghost(new PVector(13, 14), color(100, 20, 20), 16));*/
+  ghosts.add(new Ghost(new PVector(13, 14), color(100, 20, 20), 16));
 
   //Set the time powered up to 0
-  powerUp = 0;
   boardNumber = 1;
   score = 0;
 }
@@ -117,7 +115,6 @@ void tick() {
     i.tick();
   }
   checkGame();
-  powerUp = powerUp > 0? powerUp-1: 0;
 }
 
 //Check if the game is won or lost
@@ -137,8 +134,8 @@ void checkGame() {
   //Check for collisions with ghosts
   for (int i = 0; i<ghosts.size(); i++) {
     if (pacman.getPos().dist(ghosts.get(i).getPos())<.5) {
-      if (powerUp>0) {
-        ghosts.set(i, new Ghost(new PVector(12, 13), color(255, 0, 0), 5));
+      if (ghosts.get(i).getPowerUp()>0) {
+        ghosts.set(i, new Ghost(new PVector(12,13), ghosts.get(i).getCol(), ghosts.get(i).getTime()));
         score+=100;
       } else {
         setup();
