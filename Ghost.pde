@@ -20,7 +20,6 @@ class Ghost extends MovingPiece {
   public color getCol() {
     return col;
   }
-  //Used to copy an eaten ghost to respawn him
 
 
   //This method runs through "steps" of the ghost startup sequence to make sure they get out of the protected box before moving elsewhere
@@ -30,7 +29,7 @@ class Ghost extends MovingPiece {
       //Waits until a certain time has passed to allow them to come out 1 by 1
       if (millis()-start>=time) {
         step++;
-        setVel(new PVector(0, -1));
+        setVel(new PVector(0, -.1));
       }
       break;
       //Moves up until it is out of protected territory
@@ -52,24 +51,26 @@ class Ghost extends MovingPiece {
   public void ai() {
     //Must come up with some sort of algorithm to decide where to go
     if ((int)getPos().x==getPos().x && (int)getPos().y==getPos().y) {
-      PVector[] vectors = {new PVector(getVel().y, getVel().x), new PVector(-getVel().y, -getVel().x), getVel().copy()};
+      PVector[] vectors = {new PVector(-.1, 0)};
       ArrayList<PVector> vec = new ArrayList(Arrays.asList(vectors));
       Collections.shuffle(vec);
-      if (Math.random()<.4) {
-        for (int i = 0; i<3; i++) {
+      //Higher numbers increase the intelligence of the ai
+      if (Math.random()<.9) {
+        for (int i = 0; i<vec.size(); i++) {
           if (isValidMove(vec.get(i)) && Math.abs(getPos().dist(pacman.getPos())) > Math.abs(PVector.add(getPos(), vec.get(i)).dist(pacman.getPos()))) {
-            setVel(vec.get(i).copy());
+
+            setVel(vec.get(i));
             return;
           }
         }
-        for (int i = 0; i<3; i++) {
+        for (int i = 0; i<vec.size(); i++) {
           if (isValidMove(vec.get(i))) {
             setVel(vec.get(i));
             return;
           }
         }
       } else {
-        for (int i = 0; i<3; i++) {
+        for (int i = 0; i<vec.size(); i++) {
           if (isValidMove(vec.get(i))) {
             setVel(vec.get(i));
             return;
@@ -99,10 +100,12 @@ class Ghost extends MovingPiece {
 
   public void draw() {
     if (powerUp>0) {
-      fill(color(0,0,160));
+      fill(color(0, 0, 160));
+      stroke(color(0, 0, 160));
     } else {
       fill(col);
+      stroke(col);
     }
-    circle(getPos().x*gridSize+gridSize/2, getPos().y*gridSize+gridSize/2, gridSize/1.2);
+    circle(getPos().x*gridSize+gridSize/2, getPos().y*gridSize+gridSize/2+50, gridSize/1.2);
   }
 }
