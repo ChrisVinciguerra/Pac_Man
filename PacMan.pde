@@ -1,5 +1,6 @@
 class PacMan extends MovingPiece {
   PVector nextVel;
+  Animation pac = new Animation("PacmanFrames", 5);
   public PacMan() {
     super(new PVector(12.5, 22.0), new PVector(.1, 0));
     nextVel = new PVector(.1, 0);
@@ -25,8 +26,9 @@ class PacMan extends MovingPiece {
   }
 
   public void draw() {
-    fill(255, 255, 0);
-    circle(getPos().x*gridSize+gridSize/2, getPos().y*gridSize+gridSize/2+50, gridSize/1.2);
+    //fill(255, 255, 0);
+    //circle(getPos().x*gridSize+gridSize/2, getPos().y*gridSize+gridSize/2+50, gridSize/1.2);
+    pac.display(getPos().x*gridSize+gridSize/2 - 15, getPos().y*gridSize+gridSize/2+50 - 15);
   }
 
   //Checks for being centered on a block
