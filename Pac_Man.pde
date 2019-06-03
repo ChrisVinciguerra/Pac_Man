@@ -4,8 +4,7 @@ public int[][] board;
 public ArrayList<Ghost> ghosts;
 public PacMan pacman;
 
-public int boardNumber;
-public int score;
+public int score = 0;
 
 
 
@@ -47,13 +46,9 @@ void setup() {
   pacman = new PacMan();
   ghosts = new ArrayList();
   ghosts.add(new Ghost(new PVector(12, 13), color(255, 0, 0), 4));
-  ghosts.add(new Ghost(new PVector(13, 13), color(200, 0, 100), 8));
-  ghosts.add(new Ghost(new PVector(12, 14), color(200, 150, 0), 12));
-  ghosts.add(new Ghost(new PVector(13, 14), color(100, 20, 20), 16));
-
-  //Set the time powered up to 0
-  boardNumber = 1;
-  score = 0;
+  ghosts.add(new Ghost(new PVector(13, 13), color(200, 0, 100), 6));
+  ghosts.add(new Ghost(new PVector(12, 14), color(200, 150, 0), 8));
+  ghosts.add(new Ghost(new PVector(13, 14), color(100, 20, 20), 10));
 }
 
 void draw() {
@@ -67,11 +62,11 @@ void draw() {
   for (int r = 0; r <board.length; r++) {
     for (int c = 0; c<board[0].length; c++) {
       fill(255, 255, 255);
-      stroke(255,255,255);
+      stroke(255, 255, 255);
       //Draw walls
       if (board[r][c] == 0) {        
         fill(0, 0, 200);
-        stroke(0,0,200);
+        stroke(0, 0, 200);
         rect(gridSize*c, gridSize*r+50, gridSize, gridSize);
         //Draw food
       } else if (board[r][c] == 1) {
@@ -133,11 +128,12 @@ void checkGame() {
   }
   //Check for collisions with ghosts
   for (int i = 0; i<ghosts.size(); i++) {
-    if (pacman.getPos().dist(ghosts.get(i).getPos())<.5) {
+    if (pacman.getPos().dist(ghosts.get(i).getPos())<.8) {
       if (ghosts.get(i).getPowerUp()>0) {
-        ghosts.set(i, new Ghost(new PVector(12,13), ghosts.get(i).getCol(), ghosts.get(i).getTime()));
+        ghosts.set(i, new Ghost(ghosts.get(i).getStartPos(), ghosts.get(i).getCol(), ghosts.get(i).getTime()));
         score+=100;
       } else {
+        score = 0;
         setup();
       }
     }

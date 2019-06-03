@@ -9,9 +9,11 @@ class Ghost extends MovingPiece {
   private int step;
   private int start;
   private int powerUp;
+  private PVector startPos;
 
   public Ghost(PVector pos, color col, int time) {
     super(pos, new PVector(0, 0));
+    this.startPos=pos.copy();
     this.col=col;
     this.time=time*1000;
     start = millis();
@@ -19,6 +21,9 @@ class Ghost extends MovingPiece {
     powerUp=0;
   }
 
+  public PVector getStartPos() {
+    return startPos;
+  }
   public color getCol() {
     return col;
   }
@@ -31,8 +36,14 @@ class Ghost extends MovingPiece {
     return powerUp;
   }
   public void setPowerUp(int powerUp) {
-    this.powerUp = powerUp;
-    setVel(getVel().div(2));
+    //Slow the ghost to half speed if it isn't slow now
+    if (this.powerUp <= 0) {
+      setVel(new PVector(-getVel().x/2, getVel().y/2));
+    }
+    //Only slow the ghost if it was out of the safe space before it started
+    if (step>0) {
+      this.powerUp = powerUp;
+    }
   }
 
 
@@ -59,12 +70,10 @@ class Ghost extends MovingPiece {
       ai();
       move();
     }    
-    if(powerUp==1){
-      setVel(getVel().div(1/2));
+    if (powerUp==1) {
+      setVel(getVel().div(.5));
     }
-    
-    powerUp=powerUp>0?powerUp--:powerUp;
-
+    powerUp=powerUp>0?powerUp-1:powerUp;
   }
 
 
@@ -75,7 +84,7 @@ class Ghost extends MovingPiece {
       ArrayList<PVector> vec = new ArrayList(Arrays.asList(vectors));
       Collections.shuffle(vec);
       //Higher numbers increase the intelligence of the ai
-      if (Math.random()<.9) {
+      if (Math.random()<.8) {
         if (powerUp>0) {
           for (int i = 0; i<vec.size(); i++) {
             if (isValidMove(vec.get(i)) && Math.abs(getPos().dist(pacman.getPos())) < Math.abs(PVector.add(getPos(), vec.get(i)).dist(pacman.getPos()))) {

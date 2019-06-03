@@ -1,6 +1,8 @@
 class PacMan extends MovingPiece {
+  
   PVector nextVel;
   Animation pac = new Animation("PacmanFrames", 5);
+  
   public PacMan() {
     super(new PVector(12.5, 22.0), new PVector(.1, 0));
     nextVel = new PVector(.1, 0);
@@ -36,14 +38,14 @@ class PacMan extends MovingPiece {
     if (isOnCenter()) {
       if (board[Math.round(getPos().y)][Math.round(getPos().x)]==2) {
          for(int i = 0; i< ghosts.size(); i++){
-           ghosts.get(i).setPowerUp(1000/boardNumber);
+           ghosts.get(i).setPowerUp(500);
          }
         score+=20;
       }
       if (board[Math.round(getPos().y)][Math.round(getPos().x)]==1) {
         score+=10;
       }
-      board[(int)getPos().y][(int)getPos().x] = 3;
+      board[Math.round(getPos().y)][Math.round(getPos().x)] = 3;
     }
   }
 }
