@@ -21,8 +21,8 @@ abstract class MovingPiece {
   
   public boolean isValidMove(PVector testVel) {
     //Check to see whether a move would put pacman into a wall
-    float testX = Math.round((pos.x+testVel.x)*10.0)/10.0;
-    float testY = Math.round((pos.y+testVel.y)*10.0)/10.0;
+    float testX = Math.round((pos.x+testVel.x)*100.0)/100.0;
+    float testY = Math.round((pos.y+testVel.y)*100.0)/100.0;
     int posX = Math.round(testX);
     int posY = Math.round(testY);
     if ((!isWall(posY+1, posX) || posY+1-testY >= 1) && (!isWall(posY-1, posX) || posY-1-testY <= -1) && (!isWall(posY, posX+1) || posX+1-testX >= 1) &&(!isWall(posY, posX-1) || posX-1-testX <= -1)) {
@@ -44,8 +44,8 @@ abstract class MovingPiece {
   }
   public void move() {
     //Round off changes to avoid floating point errors
-    pos.x= (int)(Math.round((pos.x+vel.x)*10.0))/10.0;
-    pos.y= (int)(Math.round((pos.y+vel.y)*10.0))/10.0;
+    pos.x= (int)(Math.round((pos.x+vel.x)*100.0))/100.0;
+    pos.y= (int)(Math.round((pos.y+vel.y)*100.0))/100.0;
 
     //Teleport case
     if (pos.x <= -1 && vel.x<0) {

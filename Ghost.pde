@@ -32,6 +32,7 @@ class Ghost extends MovingPiece {
   }
   public void setPowerUp(int powerUp) {
     this.powerUp = powerUp;
+    setVel(getVel().div(2));
   }
 
 
@@ -57,7 +58,13 @@ class Ghost extends MovingPiece {
       //Uses the algorithm to pick a move before moving
       ai();
       move();
+    }    
+    if(powerUp==1){
+      setVel(getVel().div(1/2));
     }
+    
+    powerUp=powerUp>0?powerUp--:powerUp;
+
   }
 
 
@@ -69,10 +76,19 @@ class Ghost extends MovingPiece {
       Collections.shuffle(vec);
       //Higher numbers increase the intelligence of the ai
       if (Math.random()<.9) {
-        for (int i = 0; i<vec.size(); i++) {
-          if (isValidMove(vec.get(i)) && Math.abs(getPos().dist(pacman.getPos())) > Math.abs(PVector.add(getPos(), vec.get(i)).dist(pacman.getPos()))) {
-            setVel(vec.get(i));
-            return;
+        if (powerUp>0) {
+          for (int i = 0; i<vec.size(); i++) {
+            if (isValidMove(vec.get(i)) && Math.abs(getPos().dist(pacman.getPos())) < Math.abs(PVector.add(getPos(), vec.get(i)).dist(pacman.getPos()))) {
+              setVel(vec.get(i));
+              return;
+            }
+          }
+        } else {
+          for (int i = 0; i<vec.size(); i++) {
+            if (isValidMove(vec.get(i)) && Math.abs(getPos().dist(pacman.getPos())) > Math.abs(PVector.add(getPos(), vec.get(i)).dist(pacman.getPos()))) {
+              setVel(vec.get(i));
+              return;
+            }
           }
         }
         for (int i = 0; i<vec.size(); i++) {
