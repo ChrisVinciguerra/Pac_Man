@@ -53,6 +53,9 @@ void mousePressed() {
   // Save color where the mouse is clicked in trackColor variable
   int loc = mouseX + mouseY*video.width;
   trackColor = video.pixels[loc];
+  println(red(video.pixels[loc]));
+  println(green(video.pixels[loc]));
+  println(blue(video.pixels[loc]));
 }
 // Daniel Shiffman
 // http://codingtra.in
@@ -79,11 +82,14 @@ class Blob {
   void show() {
     for (PVector v : points) {
       stroke(0, 0, 255);
+      rect(minx, miny, maxx, maxy); 
       point(v.x, v.y);
     }
   }
 
-
+  PVector getMiddle(){
+    return new PVector(maxx-minx, maxy-miny);
+  }
   void add(float x, float y) {
     points.add(new PVector(x, y));
     minx = min(minx, x);
@@ -95,5 +101,27 @@ class Blob {
   float size() {
     return (maxx-minx)*(maxy-miny);
   }
+  
+  boolean isNear(float x, float y) {
 
+    // The Rectangle "clamping" strategy
+    // float cx = max(min(x, maxx), minx);
+    // float cy = max(min(y, maxy), miny);
+    // float d = distSq(cx, cy, x, y);
+
+    // Closest point in blob strategy
+    float d = 10000000;
+    for (PVector v : points) {
+      float tempD = distSq(x, y, v.x, v.y);
+      if (tempD < d) {
+        d = tempD;
+      }
+    }
+
+    if (d < distThreshold*distThreshold) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
