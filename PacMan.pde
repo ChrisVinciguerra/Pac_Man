@@ -1,8 +1,8 @@
 class PacMan extends MovingPiece {
   
   PVector nextVel;
-  Animation pac = new Animation("PacmanFrames", 5);
-  
+  Animation pac = new Animation("PacmanFramesRight", 5);
+  PVector currVel = getVel();
   public PacMan() {
     super(new PVector(12.5, 22.0), new PVector(.1, 0));
     nextVel = new PVector(.1, 0);
@@ -30,6 +30,25 @@ class PacMan extends MovingPiece {
   public void draw() {
     //fill(255, 255, 0);
     //circle(getPos().x*gridSize+gridSize/2, getPos().y*gridSize+gridSize/2+50, gridSize/1.2);
+    if(currVel != getVel()){
+    if(getVel().x != 0){
+      if(getVel().x == .1){
+        pac = new Animation("PacmanFramesRight", 5);
+      }
+      else{
+        pac = new Animation("PacmanFramesLeft", 5);
+      }
+    }
+    else{
+      if(getVel().y == .1){
+        pac = new Animation("PacmanFramesDown", 5);
+      }
+      else{
+        pac = new Animation("PacmanFramesUp", 5);
+      }
+    }
+    currVel = getVel();
+    }
     pac.display(getPos().x*gridSize+gridSize/2 - 15, getPos().y*gridSize+gridSize/2+50 - 15);
   }
 
