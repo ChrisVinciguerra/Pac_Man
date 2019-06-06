@@ -9,7 +9,7 @@ public int score = 0;
 
 
 void setup() {
-  size(780, 920);
+  size(1460, 920);
   String[] cameras = Capture.list();
   printArray(cameras);
   video = new Capture(this, 640, 360);
@@ -62,8 +62,6 @@ void restart() {
   ghosts.add(new Ghost(new PVector(13, 14), color(100, 20, 20), 10));
 }
 void draw() {
-  checkTrack();
-
   //Run through a tick of all game objects to make them move
   tick();
 
@@ -101,7 +99,7 @@ void draw() {
 
 
   video.loadPixels();
-  image(video, 0, 0);
+  image(video, 780, 0);
 
   blobs.clear();
 
@@ -145,6 +143,7 @@ void draw() {
       b.show();
     }
   }
+    checkTrack();
 }
 
 void checkTrack() {
@@ -156,11 +155,14 @@ void checkTrack() {
   }
 
   for (Blob i : blobs) {
-    if (i.points.size()>largest.points.size()) {
+    if (i.size()>largest.size()) {
       largest = i;
     }
   }
   PVector middle = largest.getMiddle();
+  rect(middle.x,middle.y, 20,20);
+  println("X: "+middle.x);
+  println("Y: "+middle.y);
   if (middle.x<200) {
     pacman.queueTurn(new PVector(-.1, 0));
     println("left");
@@ -175,6 +177,7 @@ void checkTrack() {
     println("down");
   }
 }
+
 //Send a new direction to Pac-Man whenever an arrow key is pressed to "store" a turn for whenever he can turn
 void keyPressed() {
   if (key == CODED) {
