@@ -8,7 +8,7 @@ import processing.video.*;
 Capture video;
 
 color trackColor; 
-float threshold = 25;
+float threshold = 45;
 float distThreshold = 50;
 
 ArrayList<Blob> blobs = new ArrayList<Blob>();
@@ -51,7 +51,7 @@ float distSq(float x1, float y1, float z1, float x2, float y2, float z2) {
 
 void mousePressed() {
   // Save color where the mouse is clicked in trackColor variable
-  int loc = mouseX+780 + mouseY*video.width;
+  int loc = mouseX-780 + mouseY*video.width;
   trackColor = video.pixels[loc];
   println(red(video.pixels[loc]));
   println(green(video.pixels[loc]));

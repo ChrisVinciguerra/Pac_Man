@@ -14,8 +14,7 @@ void setup() {
   printArray(cameras);
   video = new Capture(this, 640, 360);
   video.start();
-  trackColor = color(255, 0, 0);
-
+  trackColor = color(146, 37, 8);
 
   restart();
 }
@@ -160,21 +159,17 @@ void checkTrack() {
     }
   }
   PVector middle = largest.getMiddle();
-  rect(middle.x,middle.y, 20,20);
-  println("X: "+middle.x);
-  println("Y: "+middle.y);
-  if (middle.x<200) {
-    pacman.queueTurn(new PVector(-.1, 0));
-    println("left");
-  } else if (middle.x>580) {
+  rect(780+640/2-75, 360/2-75, 100, 100);
+  rect(middle.x+780,middle.y, 20,20);
+  println("X: "+middle.x+  " Y: "+middle.y);
+  if (middle.x<640/2-75) {
     pacman.queueTurn(new PVector(.1, 0));
-    println("right");
-  } else if (middle.y<200) {
+  } else if (middle.x>640/2+75) {
+    pacman.queueTurn(new PVector(-.1, 0));
+  } else if (middle.y<360/2-75) {
     pacman.queueTurn(new PVector(0, -.1));
-    println("up");
-  } else if (middle.y>720) {
+  } else if (middle.y>360/2+75) {
     pacman.queueTurn(new PVector(0, .1));
-    println("down");
   }
 }
 
