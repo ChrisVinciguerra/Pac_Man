@@ -9,7 +9,17 @@ public int score = 0;
 
 
 void setup() {
-  size(780, 920);
+  size(1460, 920);
+  String[] cameras = Capture.list();
+  printArray(cameras);
+  video = new Capture(this, 640, 360);
+  video.start();
+  trackColor = color(146, 37, 8);
+
+  restart();
+}
+
+void restart() {
   board = new int[][] {
     //Represents a Pac-Man board to check for wall collisions. 0 = wall, 1=food, 2=powerup, 3=open space, 4=ghost box
     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //0
@@ -50,7 +60,6 @@ void setup() {
   ghosts.add(new Ghost(new PVector(12, 14), color(200, 150, 0), 8));
   ghosts.add(new Ghost(new PVector(13, 14), color(100, 20, 20), 10));
 }
-
 void draw() {
   //Run through a tick of all game objects to make them move
   tick();
@@ -86,6 +95,82 @@ void draw() {
   textSize(40);
   fill(255, 255, 255);
   text("Score: "+score, 20, 40);
+
+
+  video.loadPixels();
+  image(video, 780, 0);
+
+  blobs.clear();
+
+
+  // Begin loop to walk through every pixel
+  for (int x = 0; x < video.width; x++ ) {
+    for (int y = 0; y < video.height; y++ ) {
+      int loc = x + y * video.width;
+      // What is current color
+      color currentColor = video.pixels[loc];
+      float r1 = red(currentColor);
+      float g1 = green(currentColor);
+      float b1 = blue(currentColor);
+      float r2 = red(trackColor);
+      float g2 = green(trackColor);
+      float b2 = blue(trackColor);
+
+      float d = distSq(r1, g1, b1, r2, g2, b2); 
+
+      if (d < threshold*threshold) {
+
+        boolean found = false;
+        for (Blob b : blobs) {
+          if (b.isNear(x, y)) {
+            b.add(x, y);
+            found = true;
+            break;
+          }
+        }
+
+        if (!found) {
+          Blob b = new Blob(x, y);
+          blobs.add(b);
+        }
+      }
+    }
+  }
+
+  for (Blob b : blobs) {
+    if (b.size() > 500) {
+      b.show();
+    }
+  }
+    checkTrack();
+}
+
+void checkTrack() {
+  Blob largest = null;
+  if (blobs.size()>0) {
+    largest = blobs.get(0);
+  } else {
+    return;
+  }
+
+  for (Blob i : blobs) {
+    if (i.size()>largest.size()) {
+      largest = i;
+    }
+  }
+  PVector middle = largest.getMiddle();
+  rect(780+640/2-75, 360/2-75, 100, 100);
+  rect(middle.x+780,middle.y, 20,20);
+  println("X: "+middle.x+  " Y: "+middle.y);
+  if (middle.x<640/2-75) {
+    pacman.queueTurn(new PVector(.1, 0));
+  } else if (middle.x>640/2+75) {
+    pacman.queueTurn(new PVector(-.1, 0));
+  } else if (middle.y<360/2-75) {
+    pacman.queueTurn(new PVector(0, -.1));
+  } else if (middle.y>360/2+75) {
+    pacman.queueTurn(new PVector(0, .1));
+  }
 }
 
 //Send a new direction to Pac-Man whenever an arrow key is pressed to "store" a turn for whenever he can turn
@@ -124,7 +209,7 @@ void checkGame() {
     }
   }
   if (restart) {
-    setup();
+    restart();
   }
   //Check for collisions with ghosts
   for (int i = 0; i<ghosts.size(); i++) {
@@ -134,7 +219,7 @@ void checkGame() {
         score+=100;
       } else {
         score = 0;
-        setup();
+        restart();
       }
     }
   }
