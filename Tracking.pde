@@ -8,7 +8,7 @@ import processing.video.*;
 Capture video;
 
 color trackColor; 
-float threshold = 45;
+float threshold = 30;
 float distThreshold = 50;
 
 ArrayList<Blob> blobs = new ArrayList<Blob>();
@@ -80,11 +80,7 @@ class Blob {
   }
 
   void show() {
-    for (PVector v : points) {
-      stroke(0, 0, 255);
-      rect(minx+780, miny, maxx-minx, maxy-miny); 
-      point(v.x+780, v.y);
-    }
+    rect(minx+780, miny, maxx-minx, maxy-miny); 
   }
 
   PVector getMiddle(){
