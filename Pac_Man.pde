@@ -96,6 +96,10 @@ void draw() {
   fill(255, 255, 255);
   text("Score: "+score, 20, 40);
 
+  visionTarget();
+}
+
+void visionTarget() {
 
   video.loadPixels();
   image(video, 780, 0);
@@ -136,39 +140,33 @@ void draw() {
       }
     }
   }
-
-  for (Blob b : blobs) {
-    if (b.size() > 500) {
-      b.show();
-    }
-  }
-    checkTrack();
-}
-
-void checkTrack() {
-  Blob largest = null;
+  Blob largest;
   if (blobs.size()>0) {
     largest = blobs.get(0);
   } else {
+    rect(780+640/2-50, 360/2-50, 100, 100);
     return;
   }
-
-  for (Blob i : blobs) {
-    if (i.size()>largest.size()) {
-      largest = i;
+  for (Blob b : blobs) {
+    if (b.size() > 500) {
+      if (b.size()>largest.size()) {
+        largest = b;
+      }
+      b.show();
     }
   }
   PVector middle = largest.getMiddle();
-  rect(780+640/2-75, 360/2-75, 100, 100);
-  rect(middle.x+780,middle.y, 20,20);
+  rect(780+640/2-50, 360/2-50, 100, 100);
+  fill(0, 100, 250);
+  rect(middle.x+775, middle.y-5, 10, 10);
   println("X: "+middle.x+  " Y: "+middle.y);
-  if (middle.x<640/2-75) {
+  if (middle.x<640/2-50) {
     pacman.queueTurn(new PVector(.1, 0));
-  } else if (middle.x>640/2+75) {
+  } else if (middle.x>640/2+50) {
     pacman.queueTurn(new PVector(-.1, 0));
-  } else if (middle.y<360/2-75) {
+  } else if (middle.y<360/2-50) {
     pacman.queueTurn(new PVector(0, -.1));
-  } else if (middle.y>360/2+75) {
+  } else if (middle.y>360/2+50) {
     pacman.queueTurn(new PVector(0, .1));
   }
 }
